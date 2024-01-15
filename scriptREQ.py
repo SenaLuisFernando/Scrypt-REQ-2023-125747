@@ -38,7 +38,59 @@ driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install(
 #url gsmarena
 driver.get('http://www.gsmarena.com/');
 #selecionar archivo csv
-df = pd.read_csv('C:\\Users\\luis fernando sena\\Downloads\\Prueba TAC 14_1_2024 - Hoja 1.csv')
+df = pd.read_csv('C:\\Users\\lusena\\Downloads\\TAC11_1_2024 - tac_202401041229.csv')
+'''
+salida = "none"
+Os = "none"
+cuerpo  = "none"
+almacen  = "none"
+size  = "none"
+res  = "none"
+camara = "none"
+ram  = "none"
+cpu  = "none"
+Bateria  = "none"
+Network = "none"
+link_de_la_imagen = "none"
+'''
+def imprecionGeneracionDeCsv(modelo,salida,Os,cuerpo,almacen,size,res,camera,ram,cpu,Bateria,Network,link_de_la_imagen):
+ try:
+    with open(nombre_archivo, 'a', newline='', encoding='utf-8') as archivo_csv:
+      escritor_csv = csv.DictWriter(archivo_csv, fieldnames=campos)
+      escritor_csv.writerow({
+            "Modelo": str(modelo),
+            "Fecha de Salida": str(salida),
+            "OS": str(Os),
+            "Cuerpo": str(cuerpo),
+            "Almacenamiento": str(almacen),
+            "Size": str(size),
+            "Res": str(res),
+            "Cámara": str(camera),
+            "Ram": str(ram),
+            "Cpu": str(cpu),
+            "Batería": str(Bateria),
+            "Network": str(Network),
+            "Link imagen": str(link_de_la_imagen)
+        })
+      
+    print("------------Extraccion de Datos----------------")
+    print("Modelo:", str(modelo)if modelo else None)
+    print("Fecha de Salida:", str(salida))
+    print("OS:", str(Os))
+    print("Cuerpo:",str(cuerpo))
+    print("Almacenamiento:", str(almacen))
+    print("Size:", str(size))
+    print("Res:", str(res))
+    print("Cámara:",str(camera), "mp")
+    print("Ram:", str(ram),"gb ram")
+    print("Cpu:", str(cpu))
+    print("Batería:", str(Bateria), "mAh")
+    print("Network:", str(Network))
+    print("Link imagen:",str(link_de_la_imagen))
+    print("------------Fin de Extraccion-----------------")
+ except Exception as e:
+    print(f"Error: {e}")  
+
 
 def busquedaPagina():
     try:
@@ -64,7 +116,7 @@ def busquedaPagina():
         cuerpo = body_element.text
         #Extraccion del os-hl
         OS_element = driver.find_element(By.XPATH,'//*[@id="body"]/div/div[1]/div/div[2]/ul/li[1]/span[3]/span')
-        os = OS_element.text
+        Os = OS_element.text
         #Extraccion del storage-hl
         storage_element = driver.find_element(By.XPATH,'//*[@id="body"]/div/div[1]/div/div[2]/ul/li[1]/span[4]/span')
         almacen = storage_element.text
@@ -87,43 +139,17 @@ def busquedaPagina():
         #Extraccion del networck
         network_element = driver.find_element(By.XPATH,'//*[@id="specs-list"]/table[1]/tbody/tr[1]/td[2]/a')
         Network = network_element.text
+
+
+
     except Exception as e:
         print(f"Error: {e}")   
+    
+    imprecionGeneracionDeCsv(modelo,salida,Os,cuerpo,almacen,size,res,camera,ram,cpu,Bateria,Network,link_de_la_imagen)
 
-    #time.sleep(2)
-    #generar CSV
-    with open(nombre_archivo, 'a', newline='', encoding='utf-8') as archivo_csv:
-     escritor_csv = csv.DictWriter(archivo_csv, fieldnames=campos)
-     escritor_csv.writerow({
-            "Modelo": str(modelo),
-            "Fecha de Salida": str(salida),
-            "OS": str(os),
-            "Cuerpo": str(cuerpo),
-            "Almacenamiento": str(almacen),
-            "Size": str(size),
-            "Res": str(res),
-            "Cámara": str(camera),
-            "Ram": str(ram),
-            "Cpu": str(cpu),
-            "Batería": str(Bateria),
-            "Network": str(Network),
-            "Link imagen": str(link_de_la_imagen)
-        })
-    print("------------Extraccion de Datos----------------")
-    print("Modelo:", str(modelo))
-    print("Fecha de Salida:", str(salida))
-    print("OS:", str(os))
-    print("Cuerpo:",str(cuerpo))
-    print("Almacenamiento:", str(almacen))
-    print("Size:", str(size))
-    print("Res:", str(res))
-    print("Cámara:",str(camera), "mp")
-    print("Ram:", str(ram),"gb ram")
-    print("Cpu:", str(cpu))
-    print("Batería:", str(Bateria), "mAh")
-    print("Network:", str(Network))
-    print("Link imagen:",str(link_de_la_imagen))
-    print("------------Fin de Extraccion-----------------")
+     #time.sleep(2)
+     #generar CSV
+        
     #--------------------------------------
 
 def busquedaGoogle(Marca1,Modelo1):
@@ -148,30 +174,32 @@ for index, row in df.iterrows():
  search_box.clear()
  #enviamos el el modelo de marca a la barra de busqueda
  #search_box.send_keys(marca," ",modelo)
- search_box.send_keys(modelo)
+ search_box.send_keys(modelo," ",marca)
  #creamos un evento del tipo send key en este caso enter del mismo modo buscamos medianta XPATH el elemento input de la barra de busqueda
  submit_button = driver.find_element(By.XPATH, "//form[@id='topsearch']/input[1]")
  submit_button.send_keys(Keys.ENTER)
- busquedaPagina()
+ 
+
  #filtro si no encuentra el resultado
- '''
+
  try:
     avisoNoEncontroElemento = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="body"]/div/div[1]/div/div[1]/h1'))   
+                EC.presence_of_element_located((By.XPATH, '//*[@id="news"]/h3'))   
             )
-    mensaje = avisoNoEncontroElemento.find_element(By.XPATH, '//*[@id="body"]/div/div[1]/div/div[1]/h1')
-    
-    if callable(mensaje):
-         
-         busquedaGoogle(marca, modelo)
-    else:
+    #mensaje = avisoNoEncontroElemento.find_element(By.XPATH, '//*[@id="body"]/div/div[1]/div/div[1]/h1')
+    mensaje = avisoNoEncontroElemento.text
+    if mensaje == "News":
+       
         busquedaPagina()
+
+    else:
+        busquedaGoogle(marca, modelo)
+        print("No se encontro el dato")
    
  except Exception as e:
-       
        print(f"Error: {e}") 
+       
 
- '''
 time.sleep(1)
 print("-----BUSQUEDA FINALIZDA Archivo CSV Generado en escritorio---------")
 driver.quit()
