@@ -38,7 +38,7 @@ driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install(
 #url gsmarena
 driver.get('http://www.gsmarena.com/');
 #selecionar archivo csv
-df = pd.read_csv('C:\\Users\\lusena\\Downloads\\TAC11_1_2024 - tac_202401041229.csv')
+df = pd.read_csv('C:\\Users\\luis fernando sena\\Downloads\\TAC11_1_2024 - tac_202401041229.csv')
 '''
 salida = "none"
 Os = "none"
@@ -153,14 +153,24 @@ def busquedaPagina():
     #--------------------------------------
 
 def busquedaGoogle(Marca1,Modelo1):
+    
    print("El objeto fue llamado con éxito.")
    driver1 = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()))
    driver1.get('https://www.google.com')
    buscar1 = driver1.find_element(by= By.ID , value= "APjFqb")
    buscar1.send_keys(Marca1," ",Modelo1)
    buscar1.send_keys(Keys.ENTER)
-   driver1.quit()
+try:
+        enlace_gsma = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//cite[contains(text(),'GSMArena.com')]"))
+        )
+        enlace_gsma.click()
+   
+except Exception as e:
+        print(f"No se encontró el enlace esperado: {e}")
 
+time.sleep(3)
+#driver1.quit()
 #-------------CODIGO----------------
 time.sleep(1)
 for index, row in df.iterrows():
