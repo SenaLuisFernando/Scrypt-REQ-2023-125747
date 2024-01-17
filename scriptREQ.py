@@ -38,21 +38,9 @@ driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install(
 #url gsmarena
 driver.get('http://www.gsmarena.com/');
 #selecionar archivo csv
-df = pd.read_csv('C:\\Users\\luis fernando sena\\Downloads\\TAC11_1_2024 - tac_202401041229.csv')
-'''
-salida = "none"
-Os = "none"
-cuerpo  = "none"
-almacen  = "none"
-size  = "none"
-res  = "none"
-camara = "none"
-ram  = "none"
-cpu  = "none"
-Bateria  = "none"
-Network = "none"
-link_de_la_imagen = "none"
-'''
+#df = pd.read_csv('C:\\Users\\luis fernando sena\\Downloads\\TAC11_1_2024 - tac_202401041229.csv')
+df = pd.read_csv('C:\\Users\\lusena\\Downloads\\TAC11_1_2024 - tac_202401041229.csv')
+
 def imprecionGeneracionDeCsv(modelo,salida,Os,cuerpo,almacen,size,res,camera,ram,cpu,Bateria,Network,link_de_la_imagen):
  try:
     with open(nombre_archivo, 'a', newline='', encoding='utf-8') as archivo_csv:
@@ -164,19 +152,21 @@ try:
         enlace_gsma = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//cite[contains(text(),'GSMArena.com')]"))
         )
-        enlace_gsma.click()
-   
+        enlace_gsma.click()  
 except Exception as e:
         print(f"No se encontró el enlace esperado: {e}")
 
-time.sleep(3)
 #driver1.quit()
 #-------------CODIGO----------------
-time.sleep(1)
+search_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[@id='topsearch-text']"))
+        )
+
 for index, row in df.iterrows():
  #search_box.clear()
  marca = row['mark']
- modelo = row['model']
+ modelo1 = row['model']
+ modelo = modelo1.replace("(","").replace(")","")
  #asignacion de elementos boton y barra de busqueda 
  #asignamos la barra de busqueda  mendiante su identificador NAME
  search_box = driver.find_element(by=By.NAME , value="sSearch")
@@ -196,14 +186,13 @@ for index, row in df.iterrows():
     avisoNoEncontroElemento = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="news"]/h3'))   
             )
-    #mensaje = avisoNoEncontroElemento.find_element(By.XPATH, '//*[@id="body"]/div/div[1]/div/div[1]/h1')
     mensaje = avisoNoEncontroElemento.text
     if mensaje == "News":
        
         busquedaPagina()
 
     else:
-        busquedaGoogle(marca, modelo)
+        #busquedaGoogle(marca, modelo)
         print("No se encontro el dato")
    
  except Exception as e:
